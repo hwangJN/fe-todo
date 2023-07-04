@@ -1,83 +1,88 @@
-const todos = [
-  {
-    name: "자바스크립트 공부하기",
-    tags: ["programming", "javascript"],
-    status: "todo",
-    id: 1,
-  },
-  {
-    name: "그림 그리기",
-    tags: ["picture", "favorite"],
-    status: "doing",
-    id: 2,
-  },
-];
-
 const readline = require("readline");
+const { COMMAND, ERROR } = require("./Const.js");
+const {
+  showTodos,
+  addTodos,
+  deleteTodos,
+  updateTodos,
+} = require("./Command.js");
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+/*
 
-let counts = [
-  { name: "todo", cnt: 1 },
-  { name: "doing", cnt: 1 },
-  { name: "done", cnt: 0 },
-]; // todo, doing, done
+let next_Id = 3;
 
-function showCount() {
-  let str = "현재상태 : ";
-  counts.forEach((status) => {
-    str += status.name + " : " + status.cnt + "개, ";
-  });
-  console.log(str.slice(0, -2));
+function getId() {
+  return next_Id++;
 }
 
-function showTodos(str) {
-  //all or todo or doing or done
-  if (str === "all") {
-    showCount();
+function showStatusCnt() {
+  let outputStr = "현재상태 : ";
+
+  statusCnt.forEach((status) => {
+    outputStr += status.state + " : " + status.cnt + "개, ";
+  });
+
+  console.log(outputStr.slice(0, -2));
+}
+
+function showTodos(status) {
+  if (status === "all") {
+    showStatusCnt();
   } else {
-    let temp = todos.filter((todo) => todo.status === str);
-    console.log(str + "리스트 : 총" + temp.length + "건");
-    temp.forEach((todo) => {
+    if (!checkValidStatus(status)) {
+      console.log(ERROR.STATUS_ERROR);
+      return;
+    }
+
+    const matchedStatusArr = todos.filter((todo) => todo.status === status);
+
+    console.log(status + "리스트 : 총" + matchedStatusArr.length + "건");
+
+    matchedStatusArr.forEach((todo) => {
       console.log(todo.name + ", " + todo.id);
     });
   }
 }
 
 function addTodos(name, tags) {
-  const newObject = {
-    id: todos.length + 1,
+  const newTodoObject = {
+    id: getId(),
     name: name,
     tags: tags,
-    status: "todo",
+    status: STATUS.TODO,
   };
-  todos.push(newObject);
-  console.log(name + ` 1개가 추가됐습니다.(id: ${newObject.id})`);
-  const index = counts.findIndex((item) => item.name === "todo");
-  counts[index].cnt++;
-  showCount();
+  todos.push(newTodoObject);
+
+  console.log(name + ` 1개가 추가됐습니다.(id: ${newTodoObject.id})`);
+
+  updateStatusCnt(FLAG.CNT_INCREASE, STATUS.TODO);
+
+  showStatusCnt();
 }
 
 function deleteTodos(id) {
   const targetIndex = todos.findIndex((item) => item.id == id);
   if (targetIndex >= 0) {
     const target = todos[targetIndex];
-    const index = counts.findIndex((item) => item.name === target.status);
-    counts[index].cnt--;
+    updateStatusCnt(FLAG.CNT_DECREASE, target.status);
+
     console.log(target.name + ` 가 목록에서 삭제됐습니다.`);
+
     todos.splice(targetIndex, 1);
-    showCount();
+
+    showStatusCnt();
   } else {
-    console.log("Error : Not Valid ID");
+    console.log(ERROR.ID_ERROR);
   }
 }
 
 function updateTodos(id, status) {
-  if (checkValidStatus(status) === false) {
-    console.log("Error : Not Valid Status");
+  if (!checkValidStatus(status)) {
+    console.log(ERROR.STATUS_ERROR);
     return;
   }
   const targetIndex = todos.findIndex((item) => item.id == id);
@@ -90,56 +95,104 @@ function updateTodos(id, status) {
     };
     todos.splice(targetIndex, 1, newObject);
 
-    let index = counts.findIndex((item) => item.name === target.status);
-    counts[index].cnt--;
-    index = counts.findIndex((item) => item.name === status);
-    counts[index].cnt++;
+    updateStatusCnt(FLAG.CNT_DECREASE, target.status);
+    updateStatusCnt(FLAG.CNT_INCREASE, status);
 
     console.log(
       target.name + ` 가 ${newObject.status}으로 상태가 변경됐습니다.`
     );
-    showCount();
+
+    showStatusCnt();
   } else {
-    console.log("Error : Not Valid ID");
+    console.log(ERROR.ID_ERROR);
   }
 }
 
+
 function checkValidStatus(status) {
-  for (let i = 0; i < counts.length; i++) {
-    if (counts[i].name === status) {
+  for (let i = 0; i < statusCnt.length; i++) {
+    if (statusCnt[i].state === status) {
       return true;
     }
   }
   return false;
 }
 
-function parsingWord(str) {
-  let command = str.split("$");
+function updateStatusCnt(flag, status) {
+  if (flag === FLAG.CNT_INCREASE) {
+    const index = statusCnt.findIndex((item) => item.state === status);
+    statusCnt[index].cnt++;
+  } else if (flag === FLAG.CNT_DECREASE) {
+    const index = statusCnt.findIndex((item) => item.state === status);
+    statusCnt[index].cnt--;
+  }
+}
+*/
 
-  switch (command[0]) {
-    case "show": //show${status}
-      showTodos(command[1]);
+function checkVaildCommand(commandArr) {
+  if (commandArr[0] === COMMAND.SHOW || commandArr[0] === COMMAND.DELETE) {
+    if (commandArr.length != 2) {
+      console.log(ERROR.COMMAND_ERROR);
+      return false;
+    }
+  } else if (
+    commandArr[0] === COMMAND.ADD ||
+    commandArr[0] === COMMAND.UPDATE
+  ) {
+    if (commandArr.length != 3) {
+      console.log(ERROR.COMMAND_ERROR);
+      return false;
+    }
+  } else {
+    console.log(ERROR.COMMAND_ERROR);
+    return false;
+  }
+  return true;
+}
+
+function executeCommand(str) {
+  const commandArr = str.split("$");
+  if (!checkVaildCommand(commandArr)) {
+    return;
+  }
+
+  switch (commandArr[0]) {
+    case COMMAND.SHOW: //show${status}
+      showTodos(commandArr[1]);
       break;
-    case "add": //add${name}${tags}
-      addTodos(command[1], command[2]);
+
+    case COMMAND.ADD: //add${name}${tags}
+      addTodos(commandArr[1], commandArr[2]);
       break;
-    case "delete": //delete${ID}
-      deleteTodos(command[1]);
+
+    case COMMAND.DELETE: //delete${ID}
+      deleteTodos(commandArr[1]);
       break;
-    case "update": //update${ID}${status}
-      updateTodos(command[1], command[2]);
+
+    case COMMAND.UPDATE: //update${ID}${status}
+      updateTodos(commandArr[1], commandArr[2]);
       break;
+
     default:
-      console.log("Error : Not Valid Command");
+      console.log(ERROR.COMMAND_ERROR);
       break;
   }
 }
 
 function promptUser() {
   rl.question("명령하세요 : ", (command) => {
-    parsingWord(command);
+    executeCommand(command);
     promptUser();
   });
 }
 
 promptUser();
+
+//가독성
+//모듈화
+//try catch
+
+//ID
+//상수화
+//naming
+//let const
