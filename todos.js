@@ -27,11 +27,11 @@ let counts = [
 ]; // todo, doing, done
 
 function showCount() {
-  let str2 = "현재상태 : ";
+  let str = "현재상태 : ";
   counts.forEach((status) => {
-    str2 += status.name + " : " + status.cnt + "개, ";
+    str += status.name + " : " + status.cnt + "개, ";
   });
-  console.log(str2.slice(0, -2));
+  console.log(str.slice(0, -2));
 }
 
 function showTodos(str) {
@@ -55,38 +55,62 @@ function addTodos(name, tags) {
     status: "todo",
   };
   todos.push(newObject);
-  console.log(name + ` 1개가 추가됐습니다.(id: ${todos.length})`);
+  console.log(name + ` 1개가 추가됐습니다.(id: ${newObject.id})`);
   const index = counts.findIndex((item) => item.name === "todo");
   counts[index].cnt++;
   showCount();
 }
 
 function deleteTodos(id) {
-  const target = todos.find((item) => item.id == id);
   const targetIndex = todos.findIndex((item) => item.id == id);
-  const index = counts.findIndex((item) => item.name === target.status);
-  counts[index].cnt--;
-  console.log(target.name + ` 가 목록에서 삭제됐습니다.`);
-  todos.splice(targetIndex, 1);
-  showCount();
+  if (targetIndex >= 0) {
+    const target = todos[targetIndex];
+    const index = counts.findIndex((item) => item.name === target.status);
+    counts[index].cnt--;
+    console.log(target.name + ` 가 목록에서 삭제됐습니다.`);
+    todos.splice(targetIndex, 1);
+    showCount();
+  } else {
+    console.log("Error : Not Valid ID");
+  }
 }
 
 function updateTodos(id, status) {
-  const target = todos.find((item) => item.id == id);
+  if (checkValidStatus(status) === false) {
+    console.log("Error : Not Valid Status");
+    return;
+  }
   const targetIndex = todos.findIndex((item) => item.id == id);
-  const newObject = {
-    ...target,
-    status: status,
-  };
-  todos.splice(targetIndex, 1, newObject);
+  if (targetIndex >= 0) {
+    const target = todos[targetIndex];
 
-  let index = counts.findIndex((item) => item.name === target.status);
-  counts[index].cnt--;
-  index = counts.findIndex((item) => item.name === status);
-  counts[index].cnt++;
+    const newObject = {
+      ...target,
+      status: status,
+    };
+    todos.splice(targetIndex, 1, newObject);
 
-  console.log(target.name + ` 가 ${newObject.status}으로 상태가 변경됐습니다.`);
-  showCount();
+    let index = counts.findIndex((item) => item.name === target.status);
+    counts[index].cnt--;
+    index = counts.findIndex((item) => item.name === status);
+    counts[index].cnt++;
+
+    console.log(
+      target.name + ` 가 ${newObject.status}으로 상태가 변경됐습니다.`
+    );
+    showCount();
+  } else {
+    console.log("Error : Not Valid ID");
+  }
+}
+
+function checkValidStatus(status) {
+  for (let i = 0; i < counts.length; i++) {
+    if (counts[i].name === status) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function parsingWord(str) {
@@ -106,6 +130,7 @@ function parsingWord(str) {
       updateTodos(command[1], command[2]);
       break;
     default:
+      console.log("Error : Not Valid Command");
       break;
   }
 }
