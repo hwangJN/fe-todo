@@ -1,4 +1,5 @@
 # fe-todo
+
 Node.js console 을 통한 TO-DO LIST 구현
 
 <br/>
@@ -14,7 +15,6 @@ Node.js console 을 통한 TO-DO LIST 구현
 ┣ Constant.js : 문자열 상수화
 ┣ README.md : 설계 명세서
 ```
-
 
 ## Functional description
 
@@ -49,13 +49,9 @@ Node.js console 을 통한 TO-DO LIST 구현
 ### Command.js
 
 - `showTodos` : <b>show${status}</b> 형태로 명령어를 입력받아 주어진 status에 해당하는 todos를 콘솔로 출력합니다.
-  
 - `addTodos` : <b>add${name}${tags}</b> 형태로 명령어를 입력받아 원하는 name과 tags를 가진 todo를 todos 객체에 추가합니다.
-  
 - `deleteTodos` : <b>delete${id}</b> 형태로 명령어를 입력받아 해당 id를 가진 todos 항목을 삭제합니다.
-  
 - `updateTodos` : <b>update${id}${status}</b> 형태로 명령어를 입력받아 해당 id를 가진 todos 항목의 status를 업데이트합니다.
-
 
 <br/>
 
@@ -66,5 +62,4 @@ Node.js console 을 통한 TO-DO LIST 구현
 - `todos` : <b>name</b>, <b>tags</b>, <b>status</b>, <b>id</b> 값을 가진 todo 리스트 객체
 
 - `Id` : 새로운 id 생성을 위한 id 객체
-  
 - `statusCnt` : 각 status별 개수를 저장하는 객체
