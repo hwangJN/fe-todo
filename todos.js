@@ -22,21 +22,17 @@ function checkVaildCommand(commandArr) {
     commandArr[0] === COMMAND.UPDATE
   ) {
     if (commandArr.length != 3) {
-      console.log(ERROR.COMMAND_ERROR);
+      //console.log(ERROR.COMMAND_ERROR);
       throw ERROR.COMMAND_ERROR;
     }
   } else {
-    //console.log(ERROR.COMMAND_ERROR);
-    //return false;
     throw ERROR.COMMAND_ERROR;
   }
 }
 
 function executeCommand(str) {
   const commandArr = str.split("$");
-  // if (!checkVaildCommand(commandArr)) {
-  //   return;
-  // }
+
   try {
     checkVaildCommand(commandArr);
     switch (commandArr[0]) {
@@ -57,13 +53,11 @@ function executeCommand(str) {
         break;
 
       default:
-        console.log(ERROR.COMMAND_ERROR);
-        break;
+        throw ERROR.COMMAND_ERROR;
     }
   } catch (e) {
     console.error(e);
   }
-  // console.log("ddddddddd");
 }
 
 function promptUser() {
@@ -76,8 +70,8 @@ function promptUser() {
 promptUser();
 
 //가독성
-//try catch
 
+//try catch
 //모듈화
 //ID
 //상수화

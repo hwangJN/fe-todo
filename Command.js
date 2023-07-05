@@ -42,7 +42,16 @@ function checkValidStatus(status) {
       return true;
     }
   }
-  return false;
+  throw ERROR.STATUS_ERROR;
+  // return false
+}
+
+function checkValidId(id) {
+  const targetIndex = todos.findIndex((item) => item.id == id);
+  if (targetIndex < 0) {
+    throw ERROR.ID_ERROR;
+  }
+  return targetIndex;
 }
 
 function updateStatusCnt(flag, status) {
@@ -59,18 +68,24 @@ function showTodos(status) {
   if (status === "all") {
     showStatusCnt();
   } else {
-    if (!checkValidStatus(status)) {
-      console.log(ERROR.STATUS_ERROR);
-      return;
+    // if (!checkValidStatus(status)) {
+    //   console.log(ERROR.STATUS_ERROR);
+    //   return;
+    // }
+
+    try {
+      checkValidStatus(status);
+
+      const matchedStatusArr = todos.filter((todo) => todo.status === status);
+
+      console.log(status + "리스트 : 총" + matchedStatusArr.length + "건");
+
+      matchedStatusArr.forEach((todo) => {
+        console.log(todo.name + ", " + todo.id);
+      });
+    } catch (e) {
+      console.error(e);
     }
-
-    const matchedStatusArr = todos.filter((todo) => todo.status === status);
-
-    console.log(status + "리스트 : 총" + matchedStatusArr.length + "건");
-
-    matchedStatusArr.forEach((todo) => {
-      console.log(todo.name + ", " + todo.id);
-    });
   }
 }
 
@@ -91,8 +106,8 @@ function addTodos(name, tags) {
 }
 
 function deleteTodos(id) {
-  const targetIndex = todos.findIndex((item) => item.id == id);
-  if (targetIndex >= 0) {
+  try {
+    const targetIndex = checkValidId(id);
     const target = todos[targetIndex];
     updateStatusCnt(FLAG.CNT_DECREASE, target.status);
 
@@ -101,18 +116,29 @@ function deleteTodos(id) {
     todos.splice(targetIndex, 1);
 
     showStatusCnt();
-  } else {
-    console.log(ERROR.ID_ERROR);
+  } catch (e) {
+    console.error(e);
   }
+
+  // const targetIndex = todos.findIndex((item) => item.id == id);
+  // if (targetIndex >= 0) {
+  //   const target = todos[targetIndex];
+  //   updateStatusCnt(FLAG.CNT_DECREASE, target.status);
+
+  //   console.log(target.name + ` 가 목록에서 삭제됐습니다.`);
+
+  //   todos.splice(targetIndex, 1);
+
+  //   showStatusCnt();
+  // } else {
+  //   console.log(ERROR.ID_ERROR);
+  // }
 }
 
 function updateTodos(id, status) {
-  if (!checkValidStatus(status)) {
-    console.log(ERROR.STATUS_ERROR);
-    return;
-  }
-  const targetIndex = todos.findIndex((item) => item.id == id);
-  if (targetIndex >= 0) {
+  try {
+    checkValidStatus(status);
+    const targetIndex = checkValidId(id);
     const target = todos[targetIndex];
 
     const newObject = {
@@ -129,9 +155,34 @@ function updateTodos(id, status) {
     );
 
     showStatusCnt();
-  } else {
-    console.log(ERROR.ID_ERROR);
+  } catch (e) {
+    console.error(e);
   }
+  // if (!checkValidStatus(status)) {
+  //   console.log(ERROR.STATUS_ERROR);
+  //   return;
+  // }
+  // const targetIndex = todos.findIndex((item) => item.id == id);
+  // if (targetIndex >= 0) {
+  //   const target = todos[targetIndex];
+
+  //   const newObject = {
+  //     ...target,
+  //     status: status,
+  //   };
+  //   todos.splice(targetIndex, 1, newObject);
+
+  //   updateStatusCnt(FLAG.CNT_DECREASE, target.status);
+  //   updateStatusCnt(FLAG.CNT_INCREASE, status);
+
+  //   console.log(
+  //     target.name + ` 가 ${newObject.status}으로 상태가 변경됐습니다.`
+  //   );
+
+  //   showStatusCnt();
+  // } else {
+  //   console.log(ERROR.ID_ERROR);
+  // }
 }
 
 module.exports = {
