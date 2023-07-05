@@ -1,78 +1,12 @@
-const { STATUS, ERROR, FLAG } = require("./Const.js");
-
-const todos = [
-  {
-    name: "자바스크립트 공부하기",
-    tags: ["programming", "javascript"],
-    status: "todo",
-    id: 1,
-  },
-  {
-    name: "그림 그리기",
-    tags: ["picture", "favorite"],
-    status: "doing",
-    id: 2,
-  },
-];
-
-const statusCnt = [
-  { state: STATUS.TODO, cnt: 1 },
-  { state: STATUS.DOING, cnt: 1 },
-  { state: STATUS.DONE, cnt: 0 },
-]; // todo, doing, done
-let next_Id = 3;
-
-function getId() {
-  return next_Id++;
-}
-
-function showStatusCnt() {
-  let outputStr = "현재상태 : ";
-
-  statusCnt.forEach((status) => {
-    outputStr += status.state + " : " + status.cnt + "개, ";
-  });
-
-  console.log(outputStr.slice(0, -2));
-}
-
-function checkValidStatus(status) {
-  for (let i = 0; i < statusCnt.length; i++) {
-    if (statusCnt[i].state === status) {
-      return true;
-    }
-  }
-  throw ERROR.STATUS_ERROR;
-  // return false
-}
-
-function checkValidId(id) {
-  const targetIndex = todos.findIndex((item) => item.id == id);
-  if (targetIndex < 0) {
-    throw ERROR.ID_ERROR;
-  }
-  return targetIndex;
-}
-
-function updateStatusCnt(flag, status) {
-  if (flag === FLAG.CNT_INCREASE) {
-    const index = statusCnt.findIndex((item) => item.state === status);
-    statusCnt[index].cnt++;
-  } else if (flag === FLAG.CNT_DECREASE) {
-    const index = statusCnt.findIndex((item) => item.state === status);
-    statusCnt[index].cnt--;
-  }
-}
+const { STATUS, FLAG } = require("./Const.js");
+const { todos } = require("./Data.js");
+const { checkValidStatus, checkValidId } = require("./CheckValid.js");
+const { getId, updateStatusCnt, showStatusCnt } = require("./Util.js");
 
 function showTodos(status) {
   if (status === "all") {
     showStatusCnt();
   } else {
-    // if (!checkValidStatus(status)) {
-    //   console.log(ERROR.STATUS_ERROR);
-    //   return;
-    // }
-
     try {
       checkValidStatus(status);
 
@@ -119,20 +53,6 @@ function deleteTodos(id) {
   } catch (e) {
     console.error(e);
   }
-
-  // const targetIndex = todos.findIndex((item) => item.id == id);
-  // if (targetIndex >= 0) {
-  //   const target = todos[targetIndex];
-  //   updateStatusCnt(FLAG.CNT_DECREASE, target.status);
-
-  //   console.log(target.name + ` 가 목록에서 삭제됐습니다.`);
-
-  //   todos.splice(targetIndex, 1);
-
-  //   showStatusCnt();
-  // } else {
-  //   console.log(ERROR.ID_ERROR);
-  // }
 }
 
 function updateTodos(id, status) {
@@ -158,31 +78,6 @@ function updateTodos(id, status) {
   } catch (e) {
     console.error(e);
   }
-  // if (!checkValidStatus(status)) {
-  //   console.log(ERROR.STATUS_ERROR);
-  //   return;
-  // }
-  // const targetIndex = todos.findIndex((item) => item.id == id);
-  // if (targetIndex >= 0) {
-  //   const target = todos[targetIndex];
-
-  //   const newObject = {
-  //     ...target,
-  //     status: status,
-  //   };
-  //   todos.splice(targetIndex, 1, newObject);
-
-  //   updateStatusCnt(FLAG.CNT_DECREASE, target.status);
-  //   updateStatusCnt(FLAG.CNT_INCREASE, status);
-
-  //   console.log(
-  //     target.name + ` 가 ${newObject.status}으로 상태가 변경됐습니다.`
-  //   );
-
-  //   showStatusCnt();
-  // } else {
-  //   console.log(ERROR.ID_ERROR);
-  // }
 }
 
 module.exports = {

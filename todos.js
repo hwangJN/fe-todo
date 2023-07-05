@@ -6,29 +6,12 @@ const {
   deleteTodos,
   updateTodos,
 } = require("./Command.js");
+const { checkVaildCommand } = require("./CheckValid.js");
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
-
-function checkVaildCommand(commandArr) {
-  if (commandArr[0] === COMMAND.SHOW || commandArr[0] === COMMAND.DELETE) {
-    if (commandArr.length != 2) {
-      throw ERROR.COMMAND_ERROR;
-    }
-  } else if (
-    commandArr[0] === COMMAND.ADD ||
-    commandArr[0] === COMMAND.UPDATE
-  ) {
-    if (commandArr.length != 3) {
-      //console.log(ERROR.COMMAND_ERROR);
-      throw ERROR.COMMAND_ERROR;
-    }
-  } else {
-    throw ERROR.COMMAND_ERROR;
-  }
-}
 
 function executeCommand(str) {
   const commandArr = str.split("$");
@@ -70,10 +53,36 @@ function promptUser() {
 promptUser();
 
 //가독성
-
 //try catch
 //모듈화
 //ID
 //상수화
 //naming
 //let const
+
+// 함수;
+
+// //todos.js
+// promptUser;
+// executeCommand;
+
+// //CheckVaild.js
+// checkVaildCommand;
+// checkValidStatus;
+// checkValidId;
+
+// //Util.js
+// getId;
+// showStatusCnt;
+// updateStatusCnt;
+
+// //Command.js
+// showTodos;
+// addTodos;
+// deleteTodos;
+// updateTodos;
+
+// //Data.js
+// 데이터;
+// statusCnt;
+// todos;
